@@ -263,3 +263,23 @@ Este repositório apresenta a estrutura e os materiais utilizados no desenvolvim
 **Dashboard:** Power BI  
 **Automação:** n8n  
 **Base:** Google Sheets
+
+---
+
+## 📁 Arquivos do projeto
+
+- `CRM_Comercial_Carla_BI.pbix` — arquivo do projeto desenvolvido no Power BI
+- `crm-comercial-n8n-public.json` — workflow do n8n com dados sensíveis removidos
+- `crm-comercial.png` — visão geral do CRM
+- `analise-comercial.png` — análise comercial
+- `README.md` — documentação do projeto
+
+---
+
+## 🎥 Demonstração
+
+O vídeo apresenta o fluxo completo do projeto:
+
+**Gmail → n8n → Google Sheets → Power BI**
+
+A demonstração mostra a chegada da solicitação comercial, o processamento automatizado, a atualização da base e a análise dos dados no Power BI.
