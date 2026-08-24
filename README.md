@@ -276,10 +276,46 @@ Este repositório apresenta a estrutura e os materiais utilizados no desenvolvim
 
 ---
 
+---
+
 ## 🎥 Demonstração
 
-O vídeo apresenta o fluxo completo do projeto:
+O projeto também possui uma demonstração em vídeo mostrando o fluxo de ponta a ponta:
 
 **Gmail → n8n → Google Sheets → Power BI**
 
-A demonstração mostra a chegada da solicitação comercial, o processamento automatizado, a atualização da base e a análise dos dados no Power BI.
+A demonstração apresenta a chegada da solicitação comercial, o processamento automatizado, a atualização da base e a visualização dos dados no Power BI.
+
+---
+
+## 💡 Competências demonstradas
+
+Este projeto reúne conhecimentos práticos em:
+
+- **Power BI** — desenvolvimento de dashboards e análises comerciais
+- **DAX** — criação de medidas, KPIs e regras de negócio
+- **n8n** — automação e integração de processos
+- **Gmail** — entrada e processamento das solicitações
+- **Google Sheets** — estruturação e armazenamento dos dados
+- **Business Intelligence** — transformação de dados em informações para análise
+- **Automação de processos** — redução de atividades manuais no atendimento
+- **Regras de negócio** — identificação de status, pendências e continuidade das conversas
+- **Análise comercial** — acompanhamento de leads, serviços, categorias e cidades
+
+---
+
+## 🔐 Segurança
+
+O workflow do n8n disponibilizado neste repositório foi preparado para publicação em portfólio.
+
+Credenciais, identificadores de acesso e informações pessoais foram removidos ou substituídos por placeholders, preservando a estrutura e a lógica do fluxo sem expor informações sensíveis.
+
+---
+
+## 🚀 Visão geral do projeto
+
+Este projeto foi desenvolvido com o objetivo de demonstrar uma visão de ponta a ponta sobre o ciclo do dado:
+
+**Entrada do dado → Automação → Tratamento → Armazenamento → Indicadores → Análise**
+
+Mais do que apresentar um dashboard, a proposta foi construir uma solução que conectasse automação, dados e Business Intelligence em um único processo.
