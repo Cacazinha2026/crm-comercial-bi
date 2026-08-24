@@ -1,0 +1,1171 @@
+{
+  "name": "Agente Comercial Carla BI — Public Portfolio Version",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "maxResults": 1,
+        "filters": {
+          "q": "in:inbox -from:carlabconsultoria@gmail.com -category:social -category:promotions newer_than:1d",
+          "readStatus": "both"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1808,
+        -960
+      ],
+      "id": "8899a677-5194-4331-bf7d-d2ef3d5b6688",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "GOOGLE_SHEETS_DOCUMENT_ID",
+          "mode": "list",
+          "cachedResultName": "Atendimentos_CarlaBI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Atendimentos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Thread_ID",
+              "lookupValue": "={{ $('Gmail Trigger').item.json.threadId }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1072,
+        -928
+      ],
+      "id": "9f007438-500c-4ac8-b2a1-e2db504d9de2",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Você é um atendente comercial da Carla BI Consultoria.\n\nVocê está dando continuidade a uma conversa com um potencial cliente.\n\nDADOS REGISTRADOS NA PLANILHA:\n\nNome: {{ $json.Nome }}\nEmpresa: {{ $json.Empresa }}\nCidade: {{ $json.cidade }}\nTelefone: {{ $json.telefone }}\nE-mail: {{ $json.Email }}\n\nHISTÓRICO ACUMULADO DA CONVERSA:\n\n{{ $json.Descricao_Projeto }}\n\nINFORMAÇÕES PENDENTES REGISTRADAS NA PLANILHA:\n\n{{ $json.Informacoes_Pendentes }}\n\nASSUNTO DA MENSAGEM:\n\n{{ $('Gmail Trigger').item.json.Subject }}\n\nNOVA MENSAGEM DO CLIENTE:\n\n{{ $('Gmail Trigger').item.json.snippet }}\n\nREGRAS OBRIGATÓRIAS:\n\n1. Antes de responder, analise a nova mensagem do cliente, o histórico acumulado e os dados registrados na planilha.\n\n2. A nova mensagem do cliente tem prioridade para identificar informações que ele acabou de fornecer.\n\n3. Qualquer informação fornecida pelo cliente em qualquer mensagem da mesma conversa deve ser considerada válida, mesmo que a coluna correspondente da planilha esteja como \"Não informado\".\n\n4. Nunca peça novamente uma informação que já tenha sido fornecida pelo cliente anteriormente na mesma conversa.\n\n5. NÃO use o campo \"Informacoes_Pendentes\" como verdade absoluta. Ele pode estar desatualizado. Sempre reavalie as pendências com base na conversa completa.\n\n6. Para identificar informações já fornecidas, procure explicitamente na nova mensagem e no histórico por:\n- nome da empresa;\n- empresa;\n- cidade;\n- telefone;\n- descrição ou objetivo do projeto;\n- fonte ou origem dos dados;\n- indicadores, métricas ou resultados esperados.\n\n7. Exemplos:\nSe o cliente escrever \"O nome da empresa é Empresa Teste BI\", considere Empresa como INFORMADA.\nSe o cliente escrever \"Cidade: Osasco\", considere Cidade como INFORMADA.\nSe o cliente escrever \"Telefone: 11999999999\", considere Telefone como INFORMADO.\n\n8. Mesmo que a planilha contenha:\nEmpresa: Não informado\nou\nInformacoes_Pendentes: Empresa\n\nse a nova mensagem ou o histórico contiver o nome da empresa, NÃO peça novamente a empresa.\n\n9. Da mesma forma, se cidade ou telefone estiverem presentes na conversa, NÃO solicite novamente essas informações.\n\n10. As informações principais para uma primeira análise comercial são:\n- Empresa\n- Cidade\n- Telefone\n- Descrição ou objetivo do projeto\n- Fonte dos dados\n- Principais indicadores, métricas ou resultado esperado\n\n11. Considere uma informação como preenchida quando ela estiver claramente identificável na mensagem ou no histórico, mesmo que o texto não siga exatamente o formato esperado pela planilha.\n\n12. Se ainda houver informações essenciais faltantes, faça somente as perguntas necessárias.\n\n13. Sempre que possível, reúna todas as informações faltantes em uma única resposta.\n\n14. Se apenas uma informação essencial estiver faltando, pergunte somente essa informação.\n\n15. Se todas as informações necessárias para uma primeira análise comercial estiverem disponíveis, não faça novas perguntas.\n\n16. Quando as informações forem suficientes, confirme o recebimento e informe que a equipe irá analisar a demanda e retornar com uma proposta ou orçamento personalizado.\n\n17. Não faça perguntas apenas para obter informações adicionais que não sejam essenciais para uma primeira análise comercial.\n\n18. Não invente informações.\n\n19. Não prometa prazo específico.\n\n20. O atendimento deve ser objetivo e não deve ficar fazendo perguntas indefinidamente.\n\n21. Se a nova mensagem apenas complementar uma informação já existente, confirme o recebimento e siga para análise sem repetir perguntas já respondidas.\n\n22. Antes de gerar a resposta final, faça internamente esta validação:\n- Empresa foi informada? SIM/NÃO\n- Cidade foi informada? SIM/NÃO\n- Telefone foi informado? SIM/NÃO\n- Descrição/objetivo foi informado? SIM/NÃO\n- Fonte dos dados foi informada? SIM/NÃO\n- Indicadores/métricas foram informados? SIM/NÃO\n\n23. NÃO mostre essa validação ao cliente. Use-a somente para decidir quais perguntas realmente precisam ser feitas.\n\nRETORNE SOMENTE O CORPO DA RESPOSTA DO E-MAIL.\nNão escreva \"Assunto:\".\nNão use Markdown.\nNão coloque a resposta entre aspas.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -592,
+        -944
+      ],
+      "id": "4412d847-e14e-4a60-82fd-fdc463558742",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -576,
+        -768
+      ],
+      "id": "3f737ab5-1cf0-4251-9337-56c81d7f1c29",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d1357f5-7b47-42d7-bcb6-8024aa3d8e2f",
+              "name": "Resposta",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "a78b1ec9-2e64-42d1-86dd-14535cd3bce2",
+              "name": "Status",
+              "value": "Em Atendimento",
+              "type": "string"
+            },
+            {
+              "id": "e4cc703c-9c53-4713-8eb2-c835acd2c09e",
+              "name": "Cliente_Respondeu",
+              "value": "Sim",
+              "type": "string"
+            },
+            {
+              "id": "d4406edd-1439-4d25-92fe-0e25905afa8f",
+              "name": "Ultima_Interacao",
+              "value": "={{ $now.setZone('America/Sao_Paulo').toFormat('dd/MM/yyyy, HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "9081734c-f39d-4218-9c9f-1a331ce114de",
+              "name": "Email",
+              "value": "={{ $('Get row(s) in sheet').item.json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "ae080aa8-66b5-442b-bb8d-3c6676f78da7",
+              "name": "Status_Conversa",
+              "value": "Em Atendimento",
+              "type": "string"
+            },
+            {
+              "id": "73bbcb54-f0f7-4ca5-9df9-28123f107f2b",
+              "name": "Informacoes_Pendentes",
+              "value": "={{\n(() => {\n  const snippet = $('Gmail Trigger').item.json.snippet || '';\n\n  const pendentesAnterior =\n    $('Get row(s) in sheet1').item.json.Informacoes_Pendentes || '';\n\n  // Se já não havia pendências, não criar novas pendências\n  if (\n    !pendentesAnterior ||\n    pendentesAnterior.trim() === '' ||\n    pendentesAnterior.trim().toLowerCase() === 'nenhuma'\n  ) {\n    return 'Nenhuma';\n  }\n\n  let pendentes = pendentesAnterior\n    .split(',')\n    .map(p => p.trim())\n    .filter(Boolean);\n\n  const mensagem = snippet.toLowerCase();\n\n  // Remove a pendência de objetivo/descrição somente se\n  // o cliente realmente informou essa informação nesta mensagem.\n  if (\n    /descrição\\/objetivo do projeto/i.test(pendentesAnterior) &&\n    /objetivo|finalidade|acompanhar|dashboard.*para|projeto.*para/i.test(mensagem)\n  ) {\n    pendentes = pendentes.filter(\n      p => !/descrição\\/objetivo do projeto/i.test(p)\n    );\n  }\n\n  // Remove a pendência de fonte/origem somente se\n  // o cliente informou claramente a fonte dos dados.\n  if (\n    /fonte\\/origem dos dados/i.test(pendentesAnterior) &&\n    /fonte|origem dos dados|dados.*excel|excel|sql|erp|sistema|banco de dados|csv/i.test(mensagem)\n  ) {\n    pendentes = pendentes.filter(\n      p => !/fonte\\/origem dos dados/i.test(p)\n    );\n  }\n\n  // Remove a pendência de indicadores somente se\n  // o cliente informou indicadores/métricas/KPIs.\n  if (\n    /indicadores\\/métricas/i.test(pendentesAnterior) &&\n    /indicador|indicadores|métrica|métricas|kpi|resultado esperado/i.test(mensagem)\n  ) {\n    pendentes = pendentes.filter(\n      p => !/indicadores\\/métricas/i.test(p)\n    );\n  }\n\n  return pendentes.length ? pendentes.join(', ') : 'Nenhuma';\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "ea2e7eae-ccc6-4390-ade0-13f5b83887f2",
+              "name": "Empresa",
+              "value": "={{\n(() => {\n  const s = $('Gmail Trigger').item.json.snippet || '';\n\n  const m = s.match(/Empresa\\s*:\\s*([^\\n\\r]+)/i);\n\n  if (m && m[1].trim()) {\n    return m[1].trim();\n  }\n\n  return $('Get row(s) in sheet').item.json.Empresa || 'Não informado';\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "00169ced-3e41-4c37-84f5-a217d9316e5c",
+              "name": "cidade",
+              "value": "={{\n(() => {\n  const s = $('Gmail Trigger').item.json.snippet || '';\n\n  const m = s.match(/Cidade\\s*:\\s*([^\\n\\r]+)/i);\n\n  if (m && m[1].trim()) {\n    return m[1].trim();\n  }\n\n  return $('Get row(s) in sheet').item.json.cidade || 'Não informado';\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "84987034-2332-418f-bb5f-489aec23d81e",
+              "name": "telefone",
+              "value": "={{\n(() => {\n  const s = $('Gmail Trigger').item.json.snippet || '';\n\n  const m = s.match(/Telefone\\s*:\\s*([0-9()\\s\\-+]+)/i);\n\n  if (m && m[1].trim()) {\n    return m[1].trim();\n  }\n\n  return $('Get row(s) in sheet').item.json.telefone || 'Não informado';\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "25a6deba-7049-416e-815d-15fbbda64e3f",
+              "name": "Descricao_Projeto",
+              "value": "={{\n  [\n    $('Get row(s) in sheet').item.json.Descricao_Projeto,\n    $('Gmail Trigger').item.json.snippet\n  ]\n  .filter(v => v && v.trim() && v.trim() !== 'Não informado')\n  .join('\\n\\n--- Nova interação ---\\n\\n')\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -272,
+        -944
+      ],
+      "id": "9dca3253-285d-4a51-abfc-b221f4e2077d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "GOOGLE_SHEETS_DOCUMENT_ID",
+          "mode": "list",
+          "cachedResultName": "Atendimentos_CarlaBI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Atendimentos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Thread_ID": "={{ $('Gmail Trigger').item.json.threadId }}",
+            "Empresa": "={{ $json.Empresa }}",
+            "Email": "={{ $json.Email }}",
+            "telefone": "={{ $json.telefone }}",
+            "cidade": "={{ $json.cidade }}",
+            "Status": "Em Atendimento",
+            "Resposta": "={{ $json.Resposta }}",
+            "Cliente_Respondeu": "Sim",
+            "Ultima_Interacao": "={{ $json.Ultima_Interacao }}",
+            "Status_Conversa": "Em Atendimento",
+            "Informacoes_Pendentes": "={{ $json.Informacoes_Pendentes }}",
+            "Descricao_Projeto": "={{ $json.Descricao_Projeto }}"
+          },
+          "matchingColumns": [
+            "Thread_ID"
+          ],
+          "schema": [
+            {
+              "id": "Data/Hora",
+              "displayName": "Data/Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cidade",
+              "displayName": "cidade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Assunto",
+              "displayName": "Assunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Categoria",
+              "displayName": "Categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Serviço",
+              "displayName": "Serviço",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Origem",
+              "displayName": "Origem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Prioridade",
+              "displayName": "Prioridade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Resposta",
+              "displayName": "Resposta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Observações",
+              "displayName": "Observações",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email_ID",
+              "displayName": "Email_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Thread_ID",
+              "displayName": "Thread_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Cliente_Respondeu",
+              "displayName": "Cliente_Respondeu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ultima_Interacao",
+              "displayName": "Ultima_Interacao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status_Conversa",
+              "displayName": "Status_Conversa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Informacoes_Pendentes",
+              "displayName": "Informacoes_Pendentes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Descricao_Projeto",
+              "displayName": "Descricao_Projeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -80,
+        -944
+      ],
+      "id": "959f3534-edf7-4e28-8e6e-7c140155d298",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $('AI Agent').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        -720
+      ],
+      "id": "cfd17e09-46cf-4b81-b7b6-d2fb1b60220a",
+      "name": "Reply to a message",
+      "webhookId": "WEBHOOK_ID_CONFIGURED_BY_N8N",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "aa5810bd-f3af-47d9-93af-e382e330b1b9",
+              "leftValue": "={{ !!$json.Thread_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -864,
+        -912
+      ],
+      "id": "33526029-fc2d-4bb5-8f86-48851d2665de",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Você é um atendente comercial da Carla BI Consultoria.\n\nSua função é analisar uma nova mensagem de e-mail e dar continuidade ao atendimento sem repetir perguntas já respondidas pelo cliente.\n\nNOVA MENSAGEM RECEBIDA:\n{{ $('Gmail Trigger').item.json.snippet }}\n\nREMETENTE DO E-MAIL:\n{{ $('Gmail Trigger').item.json.From || 'Não informado' }}\n\nREGRA PARA O NOME DO CLIENTE:\n\nO nome do remetente do e-mail deve ser considerado como o nome do cliente quando estiver disponível no campo REMETENTE DO E-MAIL.\n\nSe o remetente apresentar um nome, utilize esse nome como Nome do cliente.\n\nExemplo:\nREMETENTE DO E-MAIL: Carla Morais Aliste <carolina_aliste@hotmail.com>\n\nConsidere:\nNome = Carla Morais Aliste\n\nNesse caso, NÃO solicite o nome ao cliente.\n\nSe o nome já estiver preenchido na planilha, também não solicite novamente.\n\nDADOS JÁ CADASTRADOS NA PLANILHA:\nNome: {{ $('Get row(s) in sheet').item.json.Nome || 'Não informado' }}\nEmpresa: {{ $('Get row(s) in sheet').item.json.Empresa || 'Não informado' }}\nCidade: {{ $('Get row(s) in sheet').item.json.cidade || 'Não informado' }}\nTelefone: {{ $('Get row(s) in sheet').item.json.telefone || 'Não informado' }}\nE-mail: {{ $('Get row(s) in sheet').item.json.Email || 'Não informado' }}\nDescrição do projeto: {{ $('Get row(s) in sheet').item.json.Descricao_Projeto || 'Não informado' }}\nInformações pendentes anteriores: {{ $('Get row(s) in sheet').item.json.Informacoes_Pendentes || 'Nenhuma' }}\n\nREGRA PRINCIPAL:\n\nANTES DE ESCREVER A RESPOSTA, CONSOLIDE TODAS AS INFORMAÇÕES DISPONÍVEIS.\n\nVocê deve considerar conjuntamente:\n1. A nova mensagem do cliente.\n2. Os dados já cadastrados na planilha.\n3. As informações pendentes registradas anteriormente.\n\nNUNCA analise somente a nova mensagem isoladamente.\n\nNUNCA peça novamente uma informação que já tenha sido fornecida pelo cliente na nova mensagem.\n\nNUNCA peça novamente uma informação que já esteja preenchida na planilha.\n\nNUNCA considere uma informação como ausente apenas porque ela não aparece na nova mensagem. Sempre utilize os dados da planilha e as informações pendentes anteriores para complementar a nova mensagem.\n\nDADOS CADASTRAIS:\n\nOs dados cadastrais são:\n- Nome\n- Empresa\n- Cidade\n- Telefone\n- E-mail\n\nSe um desses dados estiver preenchido na planilha, considere-o como informado.\n\nATENÇÃO SOBRE DADOS DA PLANILHA:\n\nOs dados da planilha têm prioridade como histórico do cliente.\n\nSe Empresa, Cidade, Nome, Telefone ou E-mail estiverem preenchidos na planilha, eles continuam válidos mesmo que não apareçam na nova mensagem.\n\nNunca substitua um dado preenchido da planilha por \"Não informado\" apenas porque ele não apareceu na nova mensagem.\n\nA nova mensagem serve para complementar ou atualizar as informações, e não para apagar informações já cadastradas.\n\nSe um desses dados estiver claramente presente na nova mensagem, considere-o como informado.\n\nSe o nome puder ser identificado pelo remetente do e-mail ou já estiver preenchido na planilha, não solicite novamente.\n\nINFORMAÇÕES DO PROJETO:\n\nPara a análise inicial do projeto, considere:\n\n1. Objetivo do projeto\n2. Fonte ou origem dos dados\n3. Indicadores ou métricas desejados\n\nCOMO INTERPRETAR AS INFORMAÇÕES:\n\nSe o cliente escrever algo como:\n\"Os dados vêm de um arquivo Excel.\"\n\nConsidere:\nFonte ou origem dos dados = INFORMADA.\n\nSe o cliente escrever:\n\"Gostaria de acompanhar vendas por produto e faturamento.\"\n\nConsidere:\nIndicadores ou métricas = INFORMADOS.\n\nSe o cliente escrever:\n\"O objetivo é acompanhar as vendas e o faturamento.\"\n\nConsidere:\nObjetivo do projeto = INFORMADO.\n\nNão é necessário que o cliente use exatamente as palavras \"objetivo\", \"fonte\", \"indicadores\" ou \"métricas\".\n\nInterprete o significado da mensagem.\n\nEXEMPLO:\n\nMensagem do cliente:\n\n\"Olá, gostaria de solicitar um orçamento para criar um dashboard em Power BI.\n\nEmpresa: Empresa Teste 3\nCidade: Osasco\nTelefone: 11977777777\n\nO objetivo é acompanhar as vendas e o faturamento.\nOs dados vêm de um arquivo Excel.\nGostaria de acompanhar vendas por produto e faturamento.\"\n\nNesse caso, considere:\n\nNome = informado pelo remetente ou pela planilha\nEmpresa = Empresa Teste 3\nCidade = Osasco\nTelefone = 11977777777\nObjetivo = acompanhar vendas e faturamento\nFonte dos dados = arquivo Excel\nIndicadores = vendas por produto e faturamento\n\nPortanto, NÃO solicite nenhuma dessas informações novamente.\n\nSe todas essas informações estiverem disponíveis, NÃO faça nenhuma pergunta adicional.\n\nResponda confirmando o recebimento das informações e informando que a equipe irá analisar a demanda.\n\nINFORMAÇÕES PENDENTES:\n\nA coluna Informacoes_Pendentes representa informações que ainda estavam faltando anteriormente.\n\nPorém, uma informação pendente DEIXA DE SER PENDENTE assim que o cliente fornecer essa informação na nova mensagem.\n\nExemplo:\n\nInformações pendentes anteriores:\n\"Fonte/origem dos dados, Indicadores ou métricas desejados\"\n\nNova mensagem:\n\"Os dados vêm de um arquivo Excel e quero acompanhar vendas por produto e faturamento.\"\n\nResultado:\nNenhuma informação pendente.\n\nNÃO continue pedindo \"Fonte/origem dos dados\" ou \"Indicadores\" nesse caso.\n\nOutro exemplo:\n\nInformações pendentes anteriores:\n\"Indicadores ou métricas desejados\"\n\nNova mensagem:\n\"Quero acompanhar faturamento, vendas por produto e margem.\"\n\nResultado:\nNenhuma informação pendente.\n\nOutro exemplo:\n\nInformações pendentes anteriores:\n\"Fonte/origem dos dados, Indicadores ou métricas desejados\"\n\nNova mensagem:\n\"Os dados vêm de um arquivo Excel.\"\n\nResultado:\nPermanece pendente SOMENTE:\n\"Indicadores ou métricas desejados\"\n\nNão peça novamente a fonte dos dados.\n\nREGRA DE NÃO REPETIÇÃO:\n\nAntes de fazer qualquer pergunta, verifique:\n\n1. Essa informação está na planilha?\n2. Essa informação está na nova mensagem?\n3. Essa informação já foi fornecida anteriormente?\n\nSe a resposta for SIM para qualquer uma dessas perguntas, NÃO solicite essa informação novamente.\n\nSe a informação foi fornecida na nova mensagem, ela deve ser considerada recebida mesmo que estivesse registrada anteriormente como pendente.\n\nNÃO repita perguntas já respondidas.\n\nNÃO peça confirmação de informações que já estejam claras.\n\nNÃO peça informações que não sejam necessárias.\n\nORÇAMENTO:\n\nSe o cliente mencionar explicitamente orçamento ou proposta, você pode mencionar orçamento ou proposta.\n\nSe o cliente não mencionar orçamento ou proposta, não presuma que ele deseja orçamento.\n\nRESPOSTAS:\n\nSe ainda faltarem informações, solicite SOMENTE as informações que realmente faltam.\n\nSe faltar uma informação:\nsolicite somente essa informação.\n\nSe faltarem duas ou mais:\nsolicite todas em uma única mensagem.\n\nSe todas as informações necessárias estiverem disponíveis:\n\n\"Olá, [Nome].\n\nObrigada pelas informações. Recebemos todos os detalhes necessários para a análise inicial do projeto.\n\nNossa equipe irá analisar a demanda e, na sequência, daremos continuidade ao atendimento.\n\nAtenciosamente,\nCarla BI Consultoria\"\n\nSe ainda faltar informação:\n\n\"Olá, [Nome].\n\nObrigada pelas informações.\n\nPara darmos continuidade à análise do projeto, precisamos apenas de [informação que realmente falta].\n\nFicamos no aguardo dessa informação.\n\nAtenciosamente,\nCarla BI Consultoria\"\n\nIMPORTANTE:\n\n- Nunca peça novamente Empresa se já estiver informada.\n- Nunca peça novamente Cidade se já estiver informada.\n- Nunca peça novamente Telefone se já estiver informado.\n- Nunca peça novamente Nome se já estiver informado.\n- Nunca peça novamente Objetivo se já estiver informado.\n- Nunca peça novamente Fonte dos dados se já estiver informada.\n- Nunca peça novamente Indicadores ou métricas se já estiverem informados.\n- Uma informação pendente anteriormente pode ser considerada RESOLVIDA pela nova mensagem.\n- Não mantenha uma informação como pendente depois que o cliente a forneceu.\n- Não invente informações.\n- Não interprete ausência no snippet como ausência no histórico.\n- Seja cordial, profissional e objetiva.\n- Retorne somente o corpo da resposta do e-mail.\n- Não escreva \"Assunto:\".\n- Não use Markdown.\n- Não coloque a resposta entre aspas.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -976,
+        -608
+      ],
+      "id": "5e783fdd-a9cb-4ac4-8667-901fa58e9b72",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        -416
+      ],
+      "id": "e3185c06-504a-4da8-928f-35735ea518b2",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "GEMINI_CREDENTIAL_ID",
+          "name": "Google Gemini account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $('AI Agent1').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -176,
+        -480
+      ],
+      "id": "405f2f34-786d-4983-a372-ae4d225a89a1",
+      "name": "Reply to a message1",
+      "webhookId": "WEBHOOK_ID_CONFIGURED_BY_N8N",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -720
+      ],
+      "id": "7807555e-02c6-499a-8062-41b026435c22",
+      "name": "Mark a message as read",
+      "webhookId": "WEBHOOK_ID_CONFIGURED_BY_N8N",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -480
+      ],
+      "id": "39f25f04-a631-4ed0-a4d3-35f51a12d7db",
+      "name": "Mark a message as read1",
+      "webhookId": "WEBHOOK_ID_CONFIGURED_BY_N8N",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "GOOGLE_SHEETS_DOCUMENT_ID",
+          "mode": "list",
+          "cachedResultName": "Atendimentos_CarlaBI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Atendimentos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email_ID",
+              "lookupValue": "={{ $('Gmail Trigger').item.json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1568,
+        -960
+      ],
+      "id": "a8a35fb1-4f79-441e-9721-4cf943b65649",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account (configure in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1cacff7e-983a-49ee-adb9-2492b507f65e",
+              "leftValue": "={{ !!$json.Email_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1376,
+        -944
+      ],
+      "id": "f46b189f-a769-4f38-8afd-6410d485193f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "GOOGLE_SHEETS_DOCUMENT_ID",
+          "mode": "list",
+          "cachedResultName": "Atendimentos_CarlaBI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Atendimentos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/GOOGLE_SHEETS_DOCUMENT_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Empresa": "={{\n(() => {\n  const s = $('Gmail Trigger').item.json.snippet || '';\n\n  const m = s.match(\n    /Empresa\\s*:\\s*(.*?)(?=\\s+(?:Objetivo|Fonte|Fonte dos dados|Indicadores|Cidade|Telefone|E-mail|Email)\\s*:|$)/i\n  );\n\n  return m ? m[1].trim() : 'Não informado';\n})()\n}}",
+            "Email": "={{ $('Gmail Trigger').item.json.From.match(/<([^>]+)>/)?.[1]?.trim() || $('Gmail Trigger').item.json.From }}",
+            "telefone": "={{ $('Gmail Trigger').item.json.snippet.match(/Telefone\\s*:\\s*([0-9()\\s+-]+)/i)?.[1]?.trim() || 'Não informado' }}",
+            "cidade": "={{\n(() => {\n  const s = $('Gmail Trigger').item.json.snippet || '';\n  const m = s.match(/Cidade\\s*:\\s*([^]+?)(?=\\s+Telefone\\s*:)/i);\n  return m ? m[1].trim() : $('Get row(s) in sheet').item.json.cidade;\n})()\n}}",
+            "Status": "Aguardando Informações",
+            "Resposta": "={{ $('AI Agent1').item.json.output }}",
+            "Thread_ID": "={{ $('Gmail Trigger').item.json.threadId }}",
+            "Cliente_Respondeu": "Não",
+            "Ultima_Interacao": "={{ $now.setZone('America/Sao_Paulo').toFormat('dd/MM/yyyy, HH:mm:ss') }}",
+            "Status_Conversa": "Novo",
+            "Informacoes_Pendentes": "={{\n(() => {\n  const s = $('Gmail Trigger').item.json.snippet || '';\n\n  const pendentes = [];\n\n  if (!/objetivo|finalidade|acompanhar|acompanhará|acompanhar as|descrição do projeto/i.test(s)) {\n    pendentes.push('Descrição/objetivo do projeto');\n  }\n\n  if (!/fonte|origem dos dados|excel|sql|erp|sistema|banco de dados|csv/i.test(s)) {\n    pendentes.push('Fonte/origem dos dados');\n  }\n\n  if (!/indicador|indicadores|métrica|métricas|kpi|resultado esperado/i.test(s)) {\n    pendentes.push('Indicadores/métricas');\n  }\n\n  return pendentes.length ? pendentes.join(', ') : 'Nenhuma';\n})()\n}}",
+            "Descricao_Projeto": "={{ $('Gmail Trigger').item.json.snippet }}",
+            "Assunto": "={{ $('Gmail Trigger').item.json.Subject }}",
+            "Nome": "={{ $('Gmail Trigger').item.json.From.match(/^([^<]+?)(?=\\s*<)/)?.[1]?.trim() || 'Não informado' }}",
+            "Origem": "E-mail",
+            "Prioridade": "Média",
+            "Data/Hora": "={{ DateTime.fromMillis(Number($('Gmail Trigger').item.json.internalDate)).setZone('America/Sao_Paulo').toFormat('dd/MM/yyyy, HH:mm:ss') }}",
+            "Categoria": "={{ /orçamento|proposta|preço/i.test($('Gmail Trigger').item.json.snippet) ? 'Orçamento' : 'Outro' }}",
+            "Serviço": "={{ /power\\s*bi|dashboard/i.test($('Gmail Trigger').item.json.snippet) ? 'Power BI' : 'Não informado' }}",
+            "Observações": "Não informado",
+            "Email_ID": "={{ $('Gmail Trigger').item.json.id }}"
+          },
+          "matchingColumns": [
+            "Thread_ID"
+          ],
+          "schema": [
+            {
+              "id": "Data/Hora",
+              "displayName": "Data/Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cidade",
+              "displayName": "cidade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Assunto",
+              "displayName": "Assunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Categoria",
+              "displayName": "Categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Serviço",
+              "displayName": "Serviço",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Origem",
+              "displayName": "Origem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Prioridade",
+              "displayName": "Prioridade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Resposta",
+              "displayName": "Resposta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Observações",
+              "displayName": "Observações",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email_ID",
+              "displayName": "Email_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thread_ID",
+              "displayName": "Thread_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Cliente_Respondeu",
+              "displayName": "Cliente_Respondeu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ultima_Interacao",
+              "displayName": "Ultima_Interacao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status_Conversa",
+              "displayName": "Status_Conversa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Informacoes_Pendentes",
+              "displayName": "Informacoes_Pendentes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Descricao_Projeto",
+              "displayName": "Descricao_Projeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -464,
+        -480
+      ],
+      "id": "8bc650b9-d216-45ba-91b1-3b72e7c0c0c5",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account (configure in n8n)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to a message": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to a message1": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d1a244eb-71ce-4900-82fc-86b921313580",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "TGPcSmz4LOJwYUhn",
+  "tags": []
+}
