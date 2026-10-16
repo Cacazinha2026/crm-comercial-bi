@@ -174,6 +174,7 @@ CALCULATE(
     [Total Leads],
     fAtendimentos[Status] = "Novo"
 )
+```
 
 ---
 
