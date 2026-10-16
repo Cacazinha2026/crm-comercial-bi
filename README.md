@@ -276,11 +276,3 @@ O workflow do n8n disponibilizado neste repositório foi preparado para publica�
 Credenciais, identificadores de acesso e informações pessoais foram removidos ou substituídos por placeholders, preservando a estrutura e a lógica do fluxo sem expor informações sensíveis.
 
 ---
-
-## 🚀 Visão geral do projeto
-
-Este projeto foi desenvolvido com o objetivo de demonstrar uma visão de ponta a ponta sobre o ciclo do dado:
-
-**Entrada do dado → Automação → Tratamento → Armazenamento → Indicadores → Análise**
-
-Mais do que apresentar um dashboard, a proposta foi construir uma solução que conectasse automação, dados e Business Intelligence em um único processo.
