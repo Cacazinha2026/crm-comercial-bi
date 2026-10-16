@@ -130,45 +130,6 @@ Foram utilizadas medidas em DAX para criação dos principais indicadores do CRM
 ```DAX
 Total Leads =
 DISTINCTCOUNT(fAtendimentos[Thread_ID])
-
-### Leads em Atendimento
-
-```DAX
-Leads Em Atendimento =
-CALCULATE(
-    [Total Leads],
-    fAtendimentos[Status] = "Em Atendimento"
-)
-
-Leads Aguardando Informações =
-CALCULATE(
-    [Total Leads],
-    fAtendimentos[Status] = "Aguardando Informações"
-)
-
-Leads Com Pendência =
-CALCULATE(
-    [Total Leads],
-    FILTER(
-        fAtendimentos,
-        NOT ISBLANK(fAtendimentos[Informacoes_Pendentes])
-            && fAtendimentos[Informacoes_Pendentes] <> ""
-    )
-)
-
-Leads Novos =
-CALCULATE(
-    [Total Leads],
-    fAtendimentos[Status] = "Novo"
-## 🧮 Indicadores e DAX
-
-Foram utilizadas medidas em DAX para criação dos principais indicadores do CRM.
-
-### Total de Leads
-
-```DAX
-Total Leads =
-DISTINCTCOUNT(fAtendimentos[Thread_ID])
 ```
 
 ### Leads em Atendimento
@@ -213,7 +174,6 @@ CALCULATE(
     [Total Leads],
     fAtendimentos[Status] = "Novo"
 )
-```
 
 ---
 
