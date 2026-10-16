@@ -241,11 +241,12 @@ Este repositório apresenta a estrutura e os materiais utilizados no desenvolvim
 
 ## 🎥 Demonstração
 
-O projeto também possui uma demonstração em vídeo mostrando o fluxo de ponta a ponta:
+Confira o vídeo de demonstração do projeto CRM Comercial, mostrando o fluxo de automação e a integração entre as ferramentas.
 
-**Gmail → n8n → Google Sheets → Power BI**
+**Fluxo demonstrado:** Gmail → n8n → Google Sheets → Power BI
 
-A demonstração apresenta a chegada da solicitação comercial, o processamento automatizado, a atualização da base e a visualização dos dados no Power BI.
+[▶ Assistir à demonstração completa no YouTube](https://youtu.be/KUL2tTZ5NoY)
+
 
 ---
 
