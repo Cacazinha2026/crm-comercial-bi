@@ -222,7 +222,7 @@ O principal aprendizado foi entender o processo de ponta a ponta: desde a entrad
 Este repositório reúne os materiais do projeto de CRM Comercial.
 
 - **Dashboard Power BI:** [Baixar arquivo PBIX](CRM_Comercial_Carla_BI.pbix) — abra no Power BI Desktop para explorar o relatório.
-- **Workflow n8n:** [Consultar automação](crm-comercial-n8n-public.json)
+- **Workflow n8n:** [Visualizar arquivo JSON](crm-comercial-n8n-public.json) — versão preparada para consulta do fluxo de automação.
 - **Demonstração:** [Assistir ao vídeo no YouTube](https://youtu.be/KUL2tTZ5NoY)
 - **Base de dados:** Google Sheets, utilizada para armazenar os atendimentos.
 
