@@ -219,11 +219,14 @@ O principal aprendizado foi entender o processo de ponta a ponta: desde a entrad
 
 ## 🔗 Projeto
 
-Este repositório apresenta a estrutura e os materiais utilizados no desenvolvimento do projeto.
+Este repositório reúne os materiais do projeto de CRM Comercial.
 
-**Dashboard:** Power BI  
-**Automação:** n8n  
-**Base:** Google Sheets
+- **Dashboard Power BI:** [Abrir arquivo PBIX](CRM_Comercial_Carla_BI.pbix)
+- **Workflow n8n:** [Consultar automação](crm-comercial-n8n-public.json)
+- **Demonstração:** [Assistir ao vídeo no YouTube](https://youtu.be/KUL2tTZ5NoY)
+- **Base de dados:** Google Sheets, utilizada para armazenar os atendimentos.
+
+
 
 ---
 
