@@ -1,4 +1,4 @@
-# CRM Comercial — BI + Automação
+# CRM Comercial - BI + Automação
 
 Projeto de portfólio desenvolvido para simular um processo comercial automatizado, desde a chegada de uma solicitação por e-mail até a análise dos atendimentos no Power BI.
 
